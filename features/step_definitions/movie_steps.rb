@@ -25,11 +25,25 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
   #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
   list = rating_list.split ', '
   list.each do |rating|
-    if uncheck == :un
-      uncheck("ratings_" + rating)
-    else
+    if uncheck == nil
       check("ratings_" + rating)
+    else
+      uncheck("ratings_" + rating)
     end
   end
     
+end
+
+Then /^I should see movies with the following ratings: (.*)/ do |ratings|
+  list = ratings.split ', '
+  Movie.find_all_by_rating(list).each do |movie|
+    page.should have_content(movie.title)
+  end
+end
+
+Then /^I should not see movies with the following ratings: (.*)/ do |ratings|
+  list = ratings.split ', '
+  Movie.find_all_by_rating(list).each do |movie|
+    page.should have_no_content(movie.title)
+  end
 end
